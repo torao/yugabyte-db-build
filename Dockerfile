@@ -18,6 +18,7 @@ RUN dnf -y update && \
         ccache \
         gcc-toolset-11 \
         gcc-toolset-11-libatomic-devel \
+        glibc-langpack-en \
         golang \
         java-1.8.0-openjdk \
         libatomic \
@@ -43,6 +44,7 @@ RUN target_arch="$(rpm --query --queryformat='%{ARCH}' rpm)" && \
 	esac && \
     curl -Ls "https://github.com/ninja-build/ninja/releases/download/v1.12.1/$ninja_zip" | zcat > /usr/local/bin/ninja && \
     chmod +x /usr/local/bin/ninja && \
+    echo "LANG=en_US.UTF-8" > /etc/locale.conf && \
     mkdir /opt/yb-build && \
     mkdir -p $HOME/tools && \
     mkdir -p $HOME/.cache/yb_ccache && \
