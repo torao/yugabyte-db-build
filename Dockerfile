@@ -46,20 +46,20 @@ RUN target_arch="$(rpm --query --queryformat='%{ARCH}' rpm)" && \
     chmod +x /usr/local/bin/ninja && \
     echo "LANG=en_US.UTF-8" > /etc/locale.conf && \
     mkdir /opt/yb-build && \
-    mkdir -p $HOME/tools && \
+    mkdir /opt/cmake && \
     mkdir -p $HOME/.cache/yb_ccache && \
     case "$target_arch" in \
 		aarch64) cmake_arch='aarch64' ;; \
 		x86_64)  cmake_arch='x86_64' ;; \
         *) echo >&2 "error: unknown/unsupported architecture '$target_arch'"; exit 1 ;; \
 	esac && \
-    curl -L "https://github.com/Kitware/CMake/releases/download/v3.31.7/cmake-3.31.7-linux-$cmake_arch.tar.gz" | tar xzC $HOME/tools && \
-    echo 'export PATH="$HOME/tools/cmake-3.31.7-linux-'$cmake_arch'/bin:$PATH"' >> "$SHELLRC" && \
-    echo 'source /opt/rh/rh-python38/enable'                                    >> "$SHELLRC" && \
-    echo 'source /opt/rh/rh-maven35/enable'                                     >> "$SHELLRC" && \
-    echo 'source /opt/rh/gcc-toolset-11/enable'                                 >> "$SHELLRC" && \
-    echo 'export YB_CCACHE_DIR="$HOME/.cache/yb_ccache"'                        >> "$SHELLRC" && \
-    echo 'if [ -f ~/.bashrc ]; then . ~/.bashrc; fi'                            >> "$HOME/.bash_profile"
+    curl -L "https://github.com/Kitware/CMake/releases/download/v3.31.7/cmake-3.31.7-linux-$cmake_arch.tar.gz" | tar xzC /opt/cmake && \
+    echo 'export PATH="/opt/cmake/cmake-3.31.7-linux-'$cmake_arch'/bin:$PATH"' >> "$SHELLRC" && \
+    echo '# source /opt/rh/rh-python38/enable'                                 >> "$SHELLRC" && \
+    echo '# source /opt/rh/rh-maven35/enable'                                  >> "$SHELLRC" && \
+    echo 'source /opt/rh/gcc-toolset-11/enable'                                >> "$SHELLRC" && \
+    echo 'export YB_CCACHE_DIR="$HOME/.cache/yb_ccache"'                       >> "$SHELLRC" && \
+    echo 'if [ -f ~/.bashrc ]; then . ~/.bashrc; fi'                           >> "$HOME/.bash_profile"
 
 # Add entrypoint script
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
