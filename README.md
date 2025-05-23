@@ -28,15 +28,15 @@ This repository is primarily intended for developers who want to modify or exten
 
 ### Provided features
 
-- A docker image definition based on Rocky Linux 9.4
+- A docker image definition based on AlmaLinux 8
 - Environment containing all dependencies required to build YugabyteDB
 - Configuration to mount and use the local `yugabyte-db` repository
 
 ## Requirements
 
-- A host machine with Docker installed (Linux, mac OS, Windows with WSL2)
+- A host machine with Docker installed (Linux or mac OS)
 - Minimum 8 GB of RAM (16 GB or more recommended)
-- Minimum 50 GB of free disk space
+- Minimum 10 GB of free disk space
 - Internet connection (for downloading dependencies)
 - Git client
 
@@ -61,14 +61,29 @@ Next, mount the YugabyteDB repository and start the container:
 docker run -it --rm --name yugabyte-db-build \
   -e LOCAL_USER_ID=$(id -u) \
   -e LOCAL_GROUP_ID=$(id -g) \
+  -e TZ=Asia/Tokyo \
   -v $(pwd):/yugabyte-db \
   yugabyte-db-build
 ```
 
-## How to build the docker image to build and testing the YugabyteDB
-
-The build for the Linux environment seemed to support only the `amd64` environment, so the M1 Macbook also uses linux/amd64.
+Make source modification and execute commands in the `/yugabyte-db` directory inside the container.
 
 ```shell
-docker build --platform linux/aarch64 -t yugabyte-db-build:latest .
+./yb_release
+```
+
+See the official document [Build and test](https://docs.yugabyte.com/preview/contribute/core-database/build-and-test/) for what can be done.
+
+## How to build the docker image to build and testing the YugabyteDB
+
+Build the YugabyteDB build environment Docker imge as follows.
+
+```shell
+docker build -t yugabyte-db-build:latest .
+```
+
+If you are building on an ARM64 environment such as an M1 MacBook using x86_64 emulation, you can create an image like the following. However, segmentation faults may occur when building YugabyteDB.
+
+```shell
+docker build --platform linux/amd64 -t yugabyte-db-build:latest .
 ```
